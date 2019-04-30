@@ -2,6 +2,9 @@ package com.warmerdam.blackjack.hands;
 
 import com.warmerdam.blackjack.cards.Card;
 
+/**
+ * A Hand of cards for a Player. Keep bet information and a status.
+ */
 public class PlayerHand extends Hand {
 	
 	private Double bet;
@@ -18,6 +21,11 @@ public class PlayerHand extends Hand {
 		return bet;
 	}
 	
+	/**
+	 * Can be played? (Blackjack rule)
+	 *
+	 * @return
+	 */
 	public boolean isPlayable() {
 		return status.equals(HandStatus.PLAYING);
 	}
@@ -34,7 +42,7 @@ public class PlayerHand extends Hand {
 		this.status = HandStatus.STANDING;
 	}
 	
-	public boolean canBeSplited() {
+	public boolean canBeSplit() {
 		return this.getCardsCount() == 2 && this.getUniqueRanks().size() == 1 && this.isPlayable();
 	}
 	
@@ -42,7 +50,7 @@ public class PlayerHand extends Hand {
 		this.bet *= 2;
 	}
 	
-	public void splitBet() {
+	public void splitBetInHalf() {
 		this.bet /= 2;
 	}
 	
@@ -50,11 +58,22 @@ public class PlayerHand extends Hand {
 		return status;
 	}
 	
-	public PlayerHand split() {
-		PlayerHand hand = new PlayerHand(this.bet);
-		Card card = this.getCard(0);
-		this.getCards().remove(card);
-		hand.addCard(card);
-		return hand;
+	/**
+	 * Split the current hand.
+	 *
+	 * @param aNewCard    A card to be added to the current hand after the split
+	 * @param anotherCard A card to be added to the new hand after the split
+	 * @return A new hand.
+	 */
+	public PlayerHand split(Card aNewCard, Card anotherCard) {
+		Card aCardFromCurrentHand = this.getCard(0);
+		this.getCards().remove(aCardFromCurrentHand);
+		this.addCard(aNewCard);
+		
+		PlayerHand aNewHand = new PlayerHand(this.bet);
+		aNewHand.addCard(aCardFromCurrentHand);
+		aNewHand.addCard(anotherCard);
+		
+		return aNewHand;
 	}
 }
