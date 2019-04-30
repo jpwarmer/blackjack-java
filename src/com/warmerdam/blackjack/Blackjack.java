@@ -53,14 +53,14 @@ public class Blackjack {
 		while (true) {
 			
 			playBlackjack(player, deck);
-			
+			console.println(String.format("Your money so far: $%s", player.getMoney()));
 			console.println("Do you want to exit? (Y)");
 			String exit = scanner.nextLine();
 			if (exit.equalsIgnoreCase("y")) {
 				break;
 			}
 		}
-		
+		console.println(String.format("Your final amount: $%s", player.getMoney()));
 	}
 	
 	/**
@@ -73,7 +73,7 @@ public class Blackjack {
 		//The dealer is just a Hand of cards.
 		Hand dealer = new Hand();
 		
-		//Beginning of the game. Two cards each
+		//Beginning of the game. Two cards each.
 		player.addCard(deck.dealCard());
 		player.addCard(deck.dealCard());
 		
@@ -82,10 +82,16 @@ public class Blackjack {
 		
 		//Check if anyone has Blackjack.
 		if (dealer.getValue() == 21) {
+			console.println("Your hand:" + player.getDefaultHand());
+			console.println("Dealer hand:" + dealer);
+			console.println("Blackjack! You lose!!");
 			player.pay();
 			return;
 		}
 		if (player.getValue() == 21) {
+			console.println("Dealer hand:" + dealer);
+			console.println("Your hand:" + player.getDefaultHand());
+			console.println("Blackjack! You Win!!");
 			player.collect();
 			return;
 			
@@ -93,13 +99,15 @@ public class Blackjack {
 		
 		//Now the real game begins. Player play first.
 		boolean dealerTurn = false;
-		
-		while (!dealerTurn) {
+		console.println("Dealer first card:" + dealer.getCard(0));
+		while (!dealerTurn) { //Player keep playing as long as it can
 			
 			Optional<PlayerHand> optionalPlayingHand = player.getNextPlayableHand();
+			//Player can have multiple hands (after split). Should play all of them independently.
 			if (optionalPlayingHand.isPresent()) {
 				PlayerHand playingHand = optionalPlayingHand.get();
-				
+				console.println("Your playing hand:" + playingHand);
+				console.print("Please, select an option: ");
 				console.println("(1) Hit (2) Stand (3) Double Down (4) Split (5) Surrender");
 				int option = scanner.nextInt();
 				int playingHandCurrentValue = 0;
@@ -112,7 +120,7 @@ public class Blackjack {
 						if (playingHandCurrentValue >= 21) {
 							if (playingHandCurrentValue > 21) {
 								player.bustHand(playingHand);
-								break;  //Player lose
+								break;  //This hand is done.
 							}
 							player.standHand(playingHand);
 						}
@@ -123,9 +131,11 @@ public class Blackjack {
 						player.standHand(playingHand);
 						break;
 					case SPLIT:
-						//Split – If the player’s first two cards are of matching rank they can choose to place an additional bet equal to their original bet and split the cards into two hands. Where the player chooses to do this the cards are separated and an additional card is dealt to complete each hand. If either hand receives a second card of matching rank the player may be offered the option to split again, though this depends on the rules in the casino. Generally the player is allowed a maximum of 4 hands after which no further splits are allowed. The split hands are played one at a time in the order in which they were dealt, from the dealer's left to the delaer's right. The player has all the usual options: stand, hit or double down.
-						//
-						//A player who splits Aces is usually only allowed to receive a single additional card on each hand. Normally players are allowed to split two non-matching 10-value cards, for example a King and a Jack. If Aces are split and the player draws a Ten or if Tens are split and the player draws an Ace, the resulting hand does not count as a Blackjack but only as an ordinary 21. In this case the player's two-card 21 will push (tie with) dealer's 21 in three or more cards.
+						//Split – If the player’s first two cards are of matching rank they can choose to place an additional bet equal to their original bet and split the cards into two hands.
+						// Where the player chooses to do this the cards are separated and an additional card is dealt to complete each hand.
+						// If either hand receives a second card of matching rank the player may be offered the option to split again.
+						// The split hands are played one at a time. The player has all the usual options: stand, hit, split or double down.
+						
 						if (player.canSplitHand(playingHand)) {
 							player.split(playingHand, deck.dealCard(), deck.dealCard());
 						}
@@ -137,57 +147,55 @@ public class Blackjack {
 						player.doubleDown(playingHand, deck.dealCard());
 						break;
 					case SURRENDER:
-						//Surrender – Most casinos allow a player to surrender, taking back half their bet and giving up their hand. Surrender must be the player's first and only action on the hand. In the most usual version, known as Late Surrender, it is after the dealer has checked the hole card and does not have a Blackjack.
-						//
-						//After all players have completed their actions the dealer plays their hand according to fixed rules. First they will reveal their down card. The dealer will then continue to take cards until they have a total of 17 or higher. The rules regarding Soft 17 (a total of 17 with an Ace counted as 11 such as A+6) vary from casino to casino. Some require the dealer to stand while others require additional cards to be taken until a total of hard 17 or 18+ is reached. This rule will be clearly printed on the felt of the table.
-						//
-						//If the dealer busts all non-busted player hands are automatically winners.
+						//Surrender – Taking back half their bet and giving up their hand. Surrender must be the player's first and only action on the hand.
 						if (player.canSurrender()) {
 							player.surrender();
+							console.println("Your choose to surrender. Lose half your bet.");
+							console.println("Dealer hand:" + dealer);
+							return;
 						}
 						break;
 				}
 			} else {
 				dealerTurn = true;
 			}
-			scanner.nextLine();
-			break;
+		}
+		for (PlayerHand hand : player.getHands()) {
+			console.println("Your hand: " + hand + " Status: " + hand.getStatus() + " Total: " + hand.getValue());
 		}
 		
 		//Player done. Stand or 21.
-		if (dealer.getValue() <= 16) {
+		while (dealer.getValue() <= 16) {
 			//Less than 16, dealer hit.
 			dealer.addCard(deck.dealCard());
 			if (dealer.getValue() > 21) {
 				//Dealer is bust. Player wins!
+				console.println("Dealer hand:" + dealer + " Total: " + dealer.getValue());
+				console.println("You win!!");
 				player.collect();
 				return;
 			}
 		}
 		if (dealer.getValue() == 21) {
-			//At least tie. Dealer wins!
+			console.println("Dealer hand:" + dealer + " Total: " + dealer.getValue());
+			console.println("There is a tie!. Dealer wins. Its a casino after all");
 			player.pay();
 			return;
 		}
-		for (Hand hand : player.getHands()) {
+		console.println("Dealer hand:" + dealer + " Total: " + dealer.getValue());
+		for (PlayerHand hand : player.getNonBustedHands()) {
 			if (hand.getValue() > dealer.getValue()) {
-				//Player has a better hand. Player wins.
-				player.collect();
-				return;
+				//Player has a better hand. Hand wins.
+				console.println("Winner hand :" + hand);
+				player.collect(hand);
+			} else {
+				//Player hand lose
+				console.println("Loser hand :" + hand);
+				player.pay(hand);
 			}
 		}
-		//Player lose
-		player.pay();
 		
+		scanner.nextLine();
 	}
 	
-	private static void printDealerHand(String s) {
-		console.println(s);
-	}
-	
-	private static void printPlayerHands(Player player) {
-		for (Hand hand : player.getHands()) {
-			console.println("Your cards are: " + hand);
-		}
-	}
 }

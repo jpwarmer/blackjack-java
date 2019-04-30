@@ -1,7 +1,9 @@
 package com.warmerdam.blackjack.game;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.warmerdam.blackjack.cards.Card;
 import com.warmerdam.blackjack.hands.Hand;
@@ -13,7 +15,7 @@ public class Player {
 	private double money;
 	private double defaultBet;
 	
-	private List<PlayerHand> hands;
+	private List<PlayerHand> hands = new ArrayList<>();
 	
 	public Player(String name, double money, double defaultBet) {
 		this.name = name;
@@ -35,7 +37,11 @@ public class Player {
 	}
 	
 	public List<PlayerHand> getHands() {
-		return hands;
+		return this.hands;
+	}
+	
+	public List<PlayerHand> getNonBustedHands() {
+		return this.hands.stream().filter(h -> !h.isBusted()).collect(Collectors.toList());
 	}
 	
 	public int getValue() {
@@ -46,7 +52,7 @@ public class Player {
 		return hand.getValue();
 	}
 	
-	private PlayerHand getDefaultHand() {
+	public PlayerHand getDefaultHand() {
 		return hands.get(0);
 	}
 	
@@ -62,15 +68,23 @@ public class Player {
 	}
 	
 	public void pay() {
-		this.getHands().stream().filter(h -> !h.isBusted()).forEach(h -> money -= h.getBet());
+		this.getNonBustedHands().stream().forEach(h -> money -= h.getBet());
+	}
+	
+	public void pay(PlayerHand hand) {
+		money -= hand.getBet();
 	}
 	
 	public void collect() {
-		this.getHands().stream().filter(h -> !h.isBusted()).forEach(h -> money += h.getBet());
+		this.getNonBustedHands().stream().forEach(h -> money += h.getBet());
+	}
+	
+	public void collect(PlayerHand hand) {
+		money += hand.getBet();
 	}
 	
 	public Optional<PlayerHand> getNextPlayableHand() {
-		return this.getHands().stream().filter(h -> h.isPlayable()).findAny();
+		return this.getNonBustedHands().stream().filter(h -> h.isPlayable()).findAny();
 		
 	}
 	
@@ -113,5 +127,9 @@ public class Player {
 		newHand.addCard(cardToNew);
 		this.hands.add(newHand);
 		
+	}
+	
+	public double getMoney() {
+		return money;
 	}
 }

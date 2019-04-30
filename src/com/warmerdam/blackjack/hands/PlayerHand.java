@@ -5,6 +5,7 @@ import com.warmerdam.blackjack.cards.Card;
 public class PlayerHand extends Hand {
 	
 	private Double bet;
+	
 	private HandStatus status;
 	
 	public PlayerHand(Double bet) {
@@ -45,9 +46,13 @@ public class PlayerHand extends Hand {
 		this.bet /= 2;
 	}
 	
+	public HandStatus getStatus() {
+		return status;
+	}
+	
 	public PlayerHand split() {
 		PlayerHand hand = new PlayerHand(this.bet);
-		Card card = this.getCards().get(0);
+		Card card = this.getCard(0);
 		this.getCards().remove(card);
 		hand.addCard(card);
 		return hand;

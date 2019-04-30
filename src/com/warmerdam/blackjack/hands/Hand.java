@@ -22,6 +22,10 @@ public class Hand {
 		cards.add(card);
 	}
 	
+	public Card getCard(int index) {
+		return this.getCards().get(index);
+	}
+	
 	@Override
 	public String toString() {
 		return cards + "";
