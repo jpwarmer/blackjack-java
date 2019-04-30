@@ -1,7 +1,4 @@
-package com.warmerdam.juan.pablo.cards;
-
-import com.warmerdam.juan.pablo.constants.CardRank;
-import com.warmerdam.juan.pablo.constants.CardSuit;
+package com.warmerdam.blackjack.cards;
 
 public class Card {
 	

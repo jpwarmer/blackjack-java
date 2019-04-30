@@ -1,9 +1,11 @@
-package com.warmerdam.juan.pablo;
+package com.warmerdam.blackjack.game;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.warmerdam.juan.pablo.cards.Card;
+import com.warmerdam.blackjack.cards.Card;
+import com.warmerdam.blackjack.hands.Hand;
+import com.warmerdam.blackjack.hands.PlayerHand;
 
 public class Player {
 	

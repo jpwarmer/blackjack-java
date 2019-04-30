@@ -1,11 +1,11 @@
-package com.warmerdam.juan.pablo;
+package com.warmerdam.blackjack.hands;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.warmerdam.juan.pablo.cards.Card;
+import com.warmerdam.blackjack.cards.Card;
 
 public class Hand {
 	

@@ -1,4 +1,4 @@
-package com.warmerdam.juan.pablo.constants;
+package com.warmerdam.blackjack.cards;
 
 public enum CardRank {
 	ACE(1, "A"),
@@ -20,7 +20,7 @@ public enum CardRank {
 	
 	CardRank(int value) {
 		this.value = value;
-		this.face = value +"";
+		this.face = value + "";
 	}
 	
 	CardRank(int value, String face) {

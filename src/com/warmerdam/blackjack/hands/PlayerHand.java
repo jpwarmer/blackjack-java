@@ -1,15 +1,15 @@
-package com.warmerdam.juan.pablo;
+package com.warmerdam.blackjack.hands;
 
-import com.warmerdam.juan.pablo.cards.Card;
+import com.warmerdam.blackjack.cards.Card;
 
 public class PlayerHand extends Hand {
 	
 	private Double bet;
-	private Status status;
+	private HandStatus status;
 	
 	public PlayerHand(Double bet) {
 		super();
-		this.status = Status.PLAYING;
+		this.status = HandStatus.PLAYING;
 		this.bet = bet;
 	}
 	
@@ -18,19 +18,19 @@ public class PlayerHand extends Hand {
 	}
 	
 	public boolean isPlayable() {
-		return status.equals(Status.PLAYING);
+		return status.equals(HandStatus.PLAYING);
 	}
 	
 	public boolean isBusted() {
-		return status.equals(Status.BUST);
+		return status.equals(HandStatus.BUST);
 	}
 	
 	public void bust() {
-		this.status = Status.BUST;
+		this.status = HandStatus.BUST;
 	}
 	
 	public void stand() {
-		this.status = Status.STANDING;
+		this.status = HandStatus.STANDING;
 	}
 	
 	public boolean canBeSplited() {

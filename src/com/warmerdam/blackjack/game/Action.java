@@ -1,4 +1,4 @@
-package com.warmerdam.juan.pablo.constants;
+package com.warmerdam.blackjack.game;
 
 public enum Action {
 	HIT(1), STAND(2), DOUBLE_DOWN(3), SPLIT(4), SURRENDER(5);

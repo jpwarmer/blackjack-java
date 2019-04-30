@@ -1,4 +1,4 @@
-package com.warmerdam.juan.pablo.constants;
+package com.warmerdam.blackjack.cards;
 
 public enum CardSuit {
 	CLUB,
