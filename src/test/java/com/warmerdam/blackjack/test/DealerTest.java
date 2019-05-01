@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.warmerdam.blackjack.cards.Card;
 import com.warmerdam.blackjack.cards.CardRank;
 import com.warmerdam.blackjack.cards.CardSuit;
-import com.warmerdam.blackjack.game.Dealer;
+import com.warmerdam.blackjack.players.Dealer;
 
 public class DealerTest {
 	private Dealer dealer;

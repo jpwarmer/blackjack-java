@@ -1,4 +1,4 @@
-package com.warmerdam.blackjack.game;
+package com.warmerdam.blackjack.players;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class BlackjackPlayer {
 	}
 	
 	/**
-	 * Used to prepare the player for a game.
+	 * Used to prepare the player for a players.
 	 */
 	public void getReady() {
 		this.hands.clear();

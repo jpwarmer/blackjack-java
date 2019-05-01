@@ -1,4 +1,4 @@
-package com.warmerdam.blackjack.game;
+package com.warmerdam.blackjack.players;
 
 import com.warmerdam.blackjack.cards.Card;
 import com.warmerdam.blackjack.hands.Hand;

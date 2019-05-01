@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import com.warmerdam.blackjack.cards.Card;
 
 /**
- * A Hand of cards for a card game.
+ * A Hand of cards for a card players.
  */
 public class Hand {
 	
