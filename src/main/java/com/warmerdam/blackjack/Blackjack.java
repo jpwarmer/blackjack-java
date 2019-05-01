@@ -5,10 +5,10 @@ import java.util.Optional;
 import java.util.Scanner;
 
 import com.warmerdam.blackjack.cards.Deck;
+import com.warmerdam.blackjack.game.Dealer;
 import com.warmerdam.blackjack.game.Player;
 import com.warmerdam.blackjack.game.UserAction;
 import com.warmerdam.blackjack.hands.Hand;
-import com.warmerdam.blackjack.hands.PlayerHand;
 
 /**
  * We would like for you to build the game of Blackjack using the command line in Java.
@@ -46,6 +46,7 @@ import com.warmerdam.blackjack.hands.PlayerHand;
 public class Blackjack {
 	private static PrintStream console = System.out;
 	private static Scanner scanner = new Scanner(System.in);
+	private static Deck deck = new Deck();
 	
 	public static void main(String[] args) {
 		
@@ -57,18 +58,14 @@ public class Blackjack {
 		console.println("Blackjack!");
 		console.println("Dealer must HIT on 16 and STAND on 17");
 		console.println("Let's play!");
-		console.println("Your name?: ");
 		
-		String playerName = scanner.nextLine();
-		
-		//Create a new player and a deck of cards.
-		Player player = new Player(playerName, initialMoney, bet);
-		Deck deck = new Deck();
+		//Create a new player.
+		Player player = new Player(initialMoney, bet);
 		
 		//The games will loop until the player wants to end the game.
 		while (true) {
 			
-			playBlackjack(player, deck);
+			playBlackjack(player);
 			
 			scanner.nextLine();
 			
@@ -81,18 +78,18 @@ public class Blackjack {
 			console.println("\n\n\n");
 		}
 		console.println(String.format("Your final amount: $%s", player.getMoney()));
-		console.println(String.format("Hope to see you soon again, %s", playerName));
+		console.println("Hope to see you soon again");
 	}
 	
 	/**
 	 * The player will play against the dealer. Using an infinite deck of cards.
 	 */
-	private static void playBlackjack(Player player, Deck deck) {
+	private static void playBlackjack(Player player) {
 		//Delete hands of previous games.
 		player.getReady();
 		
 		//The dealer is just a Hand of cards.
-		Hand dealer = new Hand();
+		Dealer dealer = new Dealer();
 		
 		//Beginning of the game. Two cards each.
 		player.addCard(deck.dealCard());
@@ -102,15 +99,15 @@ public class Blackjack {
 		dealer.addCard(deck.dealCard());
 		
 		//Check if anyone has Blackjack.
-		if (dealer.getValue() == 21) {
+		if (dealer.hasBlackjack()) {
 			console.println("Your hand:" + player.getHand());
-			console.println("Dealer hand:" + dealer);
+			console.println("Dealer hand:" + dealer.getHand());
 			console.println("Blackjack! You lose!!");
 			player.pay();
 			return;
 		}
-		if (player.getValue() == 21) {
-			console.println("Dealer hand:" + dealer);
+		if (player.hasBlackjack()) {
+			console.println("Dealer hand:" + dealer.getHand());
 			console.println("Your hand:" + player.getHand());
 			console.println("Blackjack! You Win!!");
 			player.collect();
@@ -122,12 +119,12 @@ public class Blackjack {
 		//Must play all the hands until is dealer turn.
 		boolean dealerTurn = false;
 		
-		console.println(String.format("\n\nDealer first card: %s", dealer.getCard(0)));
+		console.println(String.format("\n\nDealer first card: %s", dealer.getFirstCard()));
 		
 		while (!dealerTurn) { //Player keep playing as long as it can/wants
 			
 			//Player can have multiple hands (after split). Should play all of them independently.
-			Optional<PlayerHand> optionalPlayingHand = player.getNextPlayableHand();
+			Optional<Hand> optionalPlayingHand = player.getNextPlayableHand();
 			
 			if (optionalPlayingHand.isPresent()) {
 				
@@ -141,6 +138,7 @@ public class Blackjack {
 					case HIT:
 						console.println("You've chosen: HIT");
 						player.hit(deck.dealCard());
+						console.println("Your resulting hand:" + player.getHand());
 						break;
 					case STAND:
 						console.println("You've chosen: STAND");
@@ -150,6 +148,7 @@ public class Blackjack {
 						console.println("You've chosen: SPLIT");
 						if (player.split(deck.dealCard(), deck.dealCard())) {
 							console.println("Your hand has been split");
+							console.println("Your resulting hand:" + player.getHand());
 						} else {
 							console.println("Your hand can not be split. Try another option");
 						}
@@ -157,49 +156,54 @@ public class Blackjack {
 					case DOUBLE_DOWN:
 						console.println("You've chosen: DOUBLE DOWN");
 						player.doubleDown(deck.dealCard());
+						console.println("Your resulting hand:" + player.getHand());
 						break;
 					case SURRENDER:
 						console.println("You've chosen: SURRENDER");
 						if (player.surrender()) {
 							console.println("Lose half of your bet.");
-							console.println("Dealer hand:" + dealer);
+							console.println("Dealer hand:" + dealer.getHand());
 							return;
 						} else {
 							console.println("You cannot surrender. Try another option");
 						}
 						break;
 				}
+				
 			} else {
 				dealerTurn = true;
 			}
 		}
 		
 		//All player hands are standing or busted
-		for (PlayerHand hand : player.getHands()) {
-			console.println("Your hand: " + hand + " Status: " + hand.getStatus() + " Total: " + hand.getValue());
+		for (Hand hand : player.getHands()) {
+			console.println("Your hand: " + hand + " Status: " + hand.getStatus());
 		}
 		
 		//Dealer turn.
-		while (dealer.getValue() <= 16) {
-			//Less than 16, dealer hit.
-			dealer.addCard(deck.dealCard());
-			if (dealer.getValue() > 21) {
-				//Dealer is bust. Player wins!
-				console.println("Dealer hand:" + dealer + " Total: " + dealer.getValue());
-				console.println("You win!!");
-				player.collect();
-				return;
+		while (true) {
+			if (!dealer.needAnotherCard(deck.dealCard())) {
+				break;
 			}
 		}
+		
+		if (dealer.isBusted()) {
+			//Dealer is bust. Player wins!
+			console.println("Dealer hand:" + dealer.getHand());
+			console.println("You win!!");
+			player.collect();
+			return;
+		}
+		
 		//Check if dealer won
-		if (dealer.getValue() == 21) {
-			console.println("Dealer hand:" + dealer + " Total: " + dealer.getValue());
+		if (dealer.hasBlackjack()) {
+			console.println("Dealer hand:" + dealer.getHand());
 			console.println("There is a tie!. Dealer wins. Its a casino after all");
 			player.pay();
 			return;
 		}
-		console.println("Dealer hand:" + dealer + " Total: " + dealer.getValue());
-		for (PlayerHand hand : player.getNonBustedHands()) {
+		console.println("Dealer hand:" + dealer.getHand());
+		for (Hand hand : player.getNonBustedHands()) {
 			if (hand.getValue() > dealer.getValue()) {
 				//Player has a better hand. Hand wins.
 				console.println("You have a winner hand :" + hand);

@@ -14,8 +14,18 @@ public class Hand {
 	
 	private List<Card> cards = new ArrayList<Card>();
 	private Boolean containsAnAce = Boolean.FALSE;
+	private Double bet = 0.0;
+	private HandStatus status = HandStatus.PLAYING;
 	
 	public Hand() {
+	}
+	
+	public Hand(Double bet) {
+		this.bet = bet;
+	}
+	
+	public Double getBet() {
+		return bet;
 	}
 	
 	/**
@@ -41,7 +51,7 @@ public class Hand {
 	
 	@Override
 	public String toString() {
-		return cards + "";
+		return cards + " = " + getValue();
 	}
 	
 	/**
@@ -77,5 +87,61 @@ public class Hand {
 	
 	public List<Card> getCards() {
 		return cards;
+	}
+	
+	/**
+	 * Can be played? (Blackjack rule)
+	 *
+	 * @return
+	 */
+	public boolean isPlayable() {
+		return status.equals(HandStatus.PLAYING);
+	}
+	
+	public boolean isBusted() {
+		return status.equals(HandStatus.BUSTED);
+	}
+	
+	public void bust() {
+		this.status = HandStatus.BUSTED;
+	}
+	
+	public void stand() {
+		this.status = HandStatus.STANDING;
+	}
+	
+	public boolean canBeSplit() {
+		return this.getCardsCount() == 2 && this.getUniqueRanks().size() == 1 && this.isPlayable();
+	}
+	
+	public void doubleBet() {
+		this.bet *= 2;
+	}
+	
+	public void splitBetInHalf() {
+		this.bet /= 2;
+	}
+	
+	public HandStatus getStatus() {
+		return status;
+	}
+	
+	/**
+	 * Split the current hand.
+	 *
+	 * @param aNewCard    A card to be added to the current hand after the split
+	 * @param anotherCard A card to be added to the new hand after the split
+	 * @return A new hand.
+	 */
+	public Hand split(Card aNewCard, Card anotherCard) {
+		Card aCardFromCurrentHand = this.getCard(0);
+		this.getCards().remove(aCardFromCurrentHand);
+		this.addCard(aNewCard);
+		
+		Hand aNewHand = new Hand(this.bet);
+		aNewHand.addCard(aCardFromCurrentHand);
+		aNewHand.addCard(anotherCard);
+		
+		return aNewHand;
 	}
 }

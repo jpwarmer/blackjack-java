@@ -9,14 +9,14 @@ import org.junit.Test;
 import com.warmerdam.blackjack.cards.Card;
 import com.warmerdam.blackjack.cards.CardRank;
 import com.warmerdam.blackjack.cards.CardSuit;
+import com.warmerdam.blackjack.hands.Hand;
 import com.warmerdam.blackjack.hands.HandStatus;
-import com.warmerdam.blackjack.hands.PlayerHand;
 
 public class HandsTest {
 	
 	@Test
 	public void blackjackCalculationTest() {
-		PlayerHand playerHand = new PlayerHand(10.0);
+		Hand playerHand = new Hand(10.0);
 		playerHand.addCard(new Card(CardRank.ACE, CardSuit.CLUB));
 		playerHand.addCard(new Card(CardRank.KING, CardSuit.CLUB));
 		
@@ -25,7 +25,7 @@ public class HandsTest {
 	
 	@Test
 	public void statusChangesTest() {
-		PlayerHand playerHand = new PlayerHand(10.0);
+		Hand playerHand = new Hand(10.0);
 		playerHand.addCard(new Card(CardRank.ACE, CardSuit.CLUB));
 		playerHand.addCard(new Card(CardRank.KING, CardSuit.CLUB));
 		
@@ -36,7 +36,7 @@ public class HandsTest {
 		playerHand.bust();
 		assertTrue(playerHand.isBusted());
 		assertFalse(playerHand.isPlayable());
-		assertEquals(HandStatus.BUST, playerHand.getStatus());
+		assertEquals(HandStatus.BUSTED, playerHand.getStatus());
 		
 		playerHand.stand();
 		assertEquals(HandStatus.STANDING, playerHand.getStatus());
@@ -44,7 +44,7 @@ public class HandsTest {
 	
 	@Test
 	public void singleAceTest() {
-		PlayerHand playerHand = new PlayerHand(10.0);
+		Hand playerHand = new Hand(10.0);
 		playerHand.addCard(new Card(CardRank.ACE, CardSuit.CLUB));
 		
 		playerHand.addCard(new Card(CardRank.TWO, CardSuit.CLUB));
@@ -59,7 +59,7 @@ public class HandsTest {
 	
 	@Test
 	public void twoAceTest() {
-		PlayerHand playerHand = new PlayerHand(10.0);
+		Hand playerHand = new Hand(10.0);
 		playerHand.addCard(new Card(CardRank.ACE, CardSuit.CLUB));
 		
 		playerHand.addCard(new Card(CardRank.ACE, CardSuit.CLUB));
@@ -69,7 +69,7 @@ public class HandsTest {
 	
 	@Test
 	public void splitTest() {
-		PlayerHand playerHand = new PlayerHand(10.0);
+		Hand playerHand = new Hand(10.0);
 		playerHand.addCard(new Card(CardRank.SEVEN, CardSuit.CLUB));
 		playerHand.addCard(new Card(CardRank.SEVEN, CardSuit.CLUB));
 		
@@ -77,7 +77,7 @@ public class HandsTest {
 		assertTrue(playerHand.canBeSplit());
 		;
 		
-		PlayerHand newHand = playerHand.split(new Card(CardRank.TWO, CardSuit.CLUB), new Card(CardRank.THREE, CardSuit.CLUB));
+		Hand newHand = playerHand.split(new Card(CardRank.TWO, CardSuit.CLUB), new Card(CardRank.THREE, CardSuit.CLUB));
 		
 		assertEquals(10, newHand.getValue());
 		assertEquals(9, playerHand.getValue());
@@ -87,7 +87,7 @@ public class HandsTest {
 	
 	@Test
 	public void getCardTest() {
-		PlayerHand playerHand = new PlayerHand(10.0);
+		Hand playerHand = new Hand(10.0);
 		playerHand.addCard(new Card(CardRank.SEVEN, CardSuit.CLUB));
 		playerHand.addCard(new Card(CardRank.SEVEN, CardSuit.CLUB));
 		
@@ -98,7 +98,7 @@ public class HandsTest {
 	
 	@Test(expected = IndexOutOfBoundsException.class)
 	public void getCardThrowExceptionTest() {
-		PlayerHand playerHand = new PlayerHand(10.0);
+		Hand playerHand = new Hand(10.0);
 		playerHand.getCard(0);
 		
 	}

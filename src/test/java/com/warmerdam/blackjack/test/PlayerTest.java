@@ -16,7 +16,7 @@ public class PlayerTest {
 	
 	@Before
 	public void setup() {
-		player = new Player("Test Player", 100.0, 10.0);
+		player = new Player(100.0, 10.0);
 		player.getReady();
 	}
 	
@@ -38,6 +38,14 @@ public class PlayerTest {
 		player.addCard(new Card(CardRank.THREE, CardSuit.CLUB));
 		assertTrue(player.surrender());
 		assertEquals(95.0, player.getMoney(), 0);
+	}
+	
+	@Test
+	public void splitTrueTest() {
+		player.addCard(new Card(CardRank.THREE, CardSuit.CLUB));
+		player.addCard(new Card(CardRank.THREE, CardSuit.DIAMOND));
+		assertTrue(player.split(new Card(CardRank.ACE, CardSuit.SPADE), new Card(CardRank.FIVE, CardSuit.HEART)));
+		
 	}
 	
 }
