@@ -5,45 +5,21 @@ import java.util.Optional;
 import java.util.Scanner;
 
 import com.warmerdam.blackjack.cards.Deck;
+import com.warmerdam.blackjack.hands.Hand;
 import com.warmerdam.blackjack.players.Dealer;
 import com.warmerdam.blackjack.players.Player;
 import com.warmerdam.blackjack.players.UserAction;
-import com.warmerdam.blackjack.hands.Hand;
 
 /**
- * We would like for you to build the players of Blackjack using the command line in Java.
- * The players has some interesting rules and is a great parallel for various business rules we encounter in real projects.
- * Our objective here is to see how you organize your thoughts and implement major OO principles into your work.
- * We will also assess your overall coding skills in the Java language.
+ * Blackjack game.
  * <p>
- * Your objective it to produce a PLAYABLE GAME. This does not mean all the rules need to be perfect, but the general players play should be implemented. * <p>
- * This should be a command line program, you will be playing against a very rudimentary dealer robot that you will write.THE ROBOT DOES NOT NEED TO BE GOOD AT BLACKJACK.
- * It can randomly select moves,, but it must make those move within the allowed rules of the players..
+ * This is the main class of the Blackjack game.
+ * Is basically the board, the orchestrator.
  * <p>
- * The players should start with $100, and each hand is $10. There are many good guides for how to play Blackjack, and here is a recap of the players
- * >
- * http://www.pagat.com/banking/blackjack.html
- * <p>
- * Though the rules can get involved, the available actions available are quite simple. The command line should show whose move it is and allow you to select one of these:
- * <p>
- * (1) Hit (2) Stand (3) Double Down (4) Split (5) Surrender
- * >
- * After the players ends, the program should declare a winner and ask for a new players allocating the winnings to the bank account of your user.
- * <p>
- * You will have 48 hours to complete this challenge.
- * This is not a lot of time, and we would like to see how you chose to spend it. The part of this players we care most about is the infrastructure of the players, not the way that the bots play, or how the visuals look.
- * <p>
- * Please make your code easy to read, well commented, and all zombie code cleaned up.
- * Once completed please create an account on BitBucket, upload this private repo, and send us a link. This assignment should be completed by Thursday morning. Please let me know if there is an issue with timing as I know this was delayed on our end.
- * Note: We have seen many of the solutions out on the web. If we see a striking similarity to what is out there, we will not be able to proceed with the interview. Please use this to express your personal coding style
- */
-
-/**
- * Blackjack players.
- * <p>
- * This is the main class of the Blackjack players.
+ * A lot of the code is related to console interactivity.
  */
 public class Blackjack {
+	
 	private static PrintStream console = System.out;
 	private static Scanner scanner = new Scanner(System.in);
 	private static Deck deck = new Deck();
@@ -83,15 +59,16 @@ public class Blackjack {
 	
 	/**
 	 * The player will play against the dealer. Using an infinite deck of cards.
+	 * Here is the game. How is played.
 	 */
 	private static void playBlackjack(Player player) {
 		//Delete hands of previous games.
 		player.getReady();
 		
-		//The dealer is just a Hand of cards.
+		//Create the dealer.
 		Dealer dealer = new Dealer();
 		
-		//Beginning of the players. Two cards each.
+		//Deal two cards to each player.
 		player.addCard(deck.dealCard());
 		player.addCard(deck.dealCard());
 		
@@ -115,13 +92,13 @@ public class Blackjack {
 			
 		}
 		
-		//Now the real players begins. Player play first.
-		//Must play all the hands until is dealer turn.
+		//Now the real game begins. Player play first.
+		//Must play all the hands until dealer's turn.
 		boolean dealerTurn = false;
 		
 		console.println(String.format("\n\nDealer first card: %s", dealer.getFirstCard()));
 		
-		while (!dealerTurn) { //Player keep playing as long as it can/wants
+		while (!dealerTurn) { //Player keep playing as long as she can/wants
 			
 			//Player can have multiple hands (after split). Should play all of them independently.
 			Optional<Hand> optionalPlayingHand = player.getNextPlayableHand();
@@ -134,6 +111,7 @@ public class Blackjack {
 				console.print("Please, select an option: ");
 				console.println("(1) Hit (2) Stand (3) Double Down (4) Split (5) Surrender");
 				int option = scanner.nextInt();
+				
 				switch (UserAction.valueOf(option)) {
 					case HIT:
 						console.println("You've chosen: HIT");
@@ -175,12 +153,12 @@ public class Blackjack {
 			}
 		}
 		
-		//All player hands are standing or busted
+		//All player's hands are standing or busted
 		for (Hand hand : player.getHands()) {
 			console.println("Your hand: " + hand + " Status: " + hand.getStatus());
 		}
 		
-		//Dealer turn.
+		//Dealer's turn.
 		while (true) {
 			if (!dealer.needAnotherCard(deck.dealCard())) {
 				break;
@@ -188,7 +166,7 @@ public class Blackjack {
 		}
 		
 		if (dealer.isBusted()) {
-			//Dealer is bust. Player wins!
+			//Dealer is busted. Player wins!
 			console.println("Dealer hand:" + dealer.getHand());
 			console.println("You win!!");
 			player.collect();
@@ -209,7 +187,7 @@ public class Blackjack {
 				console.println("You have a winner hand :" + hand);
 				player.collect(hand);
 			} else {
-				//Player hand lose
+				//Player's hand lose
 				console.println("You have a losing hand :" + hand);
 				player.pay(hand);
 			}
