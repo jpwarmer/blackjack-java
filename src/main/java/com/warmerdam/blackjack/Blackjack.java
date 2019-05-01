@@ -45,16 +45,24 @@ public class Blackjack {
 			
 			scanner.nextLine();
 			
-			console.println(String.format("Your money so far: $%s", player.getMoney()));
-			console.println("Continue? (Enter e or E to exit, any other character to continue)");
+			console.println(String.format("Your money so far: $%s\n", player.getMoney()));
+			if (player.getMoney() <= 0) {
+				console.println("\n*************************************************************************************************\n" +
+						"You don't have any more money. Don't worry, we accept: cars, houses, souls, ships, family treasures! ;)" +
+						"\n*************************************************************************************************");
+			}
+			console.println("\nContinue? (Enter e or E to exit, any other character to continue)");
 			String exit = scanner.nextLine();
 			if (exit.equalsIgnoreCase("e")) {
 				break;
 			}
 			console.println("\n\n\n");
 		}
+		
+		console.println("\n**************************************");
 		console.println(String.format("Your final amount: $%s", player.getMoney()));
-		console.println("Hope to see you soon again");
+		console.println("**************************************");
+		console.println("\nHope to see you soon again");
 	}
 	
 	/**
@@ -79,16 +87,20 @@ public class Blackjack {
 		if (dealer.hasBlackjack()) {
 			console.println("Your hand:" + player.getHand());
 			console.println("Dealer hand:" + dealer.getHand());
-			console.println("Blackjack! You lose!!");
-			console.println("\nPress <Enter> to continue.");
+			console.println("\n*******************\n" +
+					"Blackjack! You lose!!" +
+					"\n*******************\n");
+			console.println("Press <Enter> to continue.");
 			player.pay();
 			return;
 		}
 		if (player.hasBlackjack()) {
 			console.println("Dealer hand:" + dealer.getHand());
 			console.println("Your hand:" + player.getHand());
-			console.println("Blackjack! You Win!!");
-			console.println("\nPress <Enter> to continue.");
+			console.println("\n*******************\n" +
+					"Blackjack! You lose!!" +
+					"\n*******************\n");
+			console.println("Press <Enter> to continue.");
 			player.collect();
 			return;
 			
@@ -130,7 +142,7 @@ public class Blackjack {
 							console.println("Your hand has been split");
 							console.println("Your resulting hand:" + player.getHand());
 						} else {
-							console.println("Your hand can not be split. Try another option");
+							console.println("Your hand can not be split. Try another option\n");
 						}
 						break;
 					case DOUBLE_DOWN:
@@ -145,7 +157,7 @@ public class Blackjack {
 							console.println("Dealer hand:" + dealer.getHand());
 							return;
 						} else {
-							console.println("You cannot surrender. Try another option");
+							console.println("You cannot surrender. Try another option\n");
 						}
 						break;
 				}
@@ -161,6 +173,14 @@ public class Blackjack {
 		}
 		
 		console.println("\nDealer hand:" + dealer.getHand());
+		
+		if (player.isBusted()) {
+			console.println("\n************\n" +
+					"You lose!!" +
+					"\n************\n");
+			return;
+		}
+		
 		console.println("\nDealer turn.\n");
 		//Dealer's turn.
 		while (dealerTurn) {
@@ -182,22 +202,26 @@ public class Blackjack {
 			}
 		}
 		
+		console.println("Dealer hand:" + dealer.getHand());
 		if (dealer.isBusted()) {
 			//Dealer is busted. Player wins!
-			console.println("Dealer hand:" + dealer.getHand());
-			console.println("You win!!");
+			console.println("\n************\n" +
+					"You win!!" +
+					"\n************\n");
 			player.collect();
 			return;
 		}
 		
 		//Check if dealer won
 		if (dealer.hasBlackjack()) {
-			console.println("Dealer hand:" + dealer.getHand());
-			console.println("There is a tie!. Dealer wins. Its a casino after all");
+			console.println("\n******************************************************\n" +
+					"There is a tie!. Dealer wins. Its a casino after all" +
+					"\n******************************************************\n");
 			player.pay();
 			return;
 		}
-		console.println("Dealer hand:" + dealer.getHand());
+		
+		console.println("\n*****************************************************************\n");
 		for (Hand hand : player.getNonBustedHands()) {
 			if (hand.getValue() > dealer.getValue()) {
 				//Player has a better hand. Hand wins.
@@ -212,6 +236,7 @@ public class Blackjack {
 				player.pay(hand);
 			}
 		}
+		console.println("\n*****************************************************************\n");
 	}
 	
 }

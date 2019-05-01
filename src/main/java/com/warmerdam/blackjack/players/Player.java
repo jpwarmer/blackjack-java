@@ -98,4 +98,7 @@ public class Player extends BlackjackPlayer {
 		return (this.getHands().size() == 1 && getHand().getCardsCount() == 2);
 	}
 	
+	public boolean isBusted() {
+		return this.getNonBustedHands().isEmpty();
+	}
 }
