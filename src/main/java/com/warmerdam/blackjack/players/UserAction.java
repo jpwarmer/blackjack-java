@@ -1,7 +1,7 @@
 package com.warmerdam.blackjack.players;
 
 public enum UserAction {
-	HIT(1), STAND(2), DOUBLE_DOWN(3), SPLIT(4), SURRENDER(5);
+	HIT(1), STAND(2), DOUBLE_DOWN(3), SPLIT(4), SURRENDER(5), DONE(0);
 	
 	private final int value;
 	

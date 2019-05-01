@@ -46,9 +46,9 @@ public class Blackjack {
 			scanner.nextLine();
 			
 			console.println(String.format("Your money so far: $%s", player.getMoney()));
-			console.println("Do you want to exit? (Y)");
+			console.println("Continue? (Enter e or E to exit, any other character to continue)");
 			String exit = scanner.nextLine();
-			if (exit.equalsIgnoreCase("y")) {
+			if (exit.equalsIgnoreCase("e")) {
 				break;
 			}
 			console.println("\n\n\n");
@@ -80,6 +80,7 @@ public class Blackjack {
 			console.println("Your hand:" + player.getHand());
 			console.println("Dealer hand:" + dealer.getHand());
 			console.println("Blackjack! You lose!!");
+			console.println("\nPress <Enter> to continue.");
 			player.pay();
 			return;
 		}
@@ -87,6 +88,7 @@ public class Blackjack {
 			console.println("Dealer hand:" + dealer.getHand());
 			console.println("Your hand:" + player.getHand());
 			console.println("Blackjack! You Win!!");
+			console.println("\nPress <Enter> to continue.");
 			player.collect();
 			return;
 			
@@ -158,10 +160,25 @@ public class Blackjack {
 			console.println("Your hand: " + hand + " Status: " + hand.getStatus());
 		}
 		
+		console.println("\nDealer hand:" + dealer.getHand());
+		console.println("\nDealer turn.\n");
 		//Dealer's turn.
-		while (true) {
-			if (!dealer.needAnotherCard(deck.dealCard())) {
-				break;
+		while (dealerTurn) {
+			UserAction dealerAction = dealer.getNextAction();
+			switch (dealerAction) {
+				case HIT:
+					console.println("Dealer HIT");
+					dealer.hit(deck.dealCard());
+					console.println("Dealer resulting hand:" + dealer.getHand());
+					break;
+				case STAND:
+					console.println("Dealer STAND");
+					dealer.stand();
+					dealerTurn = false;
+					break;
+				case DONE:
+					dealerTurn = false;
+					break;
 			}
 		}
 		
@@ -189,6 +206,9 @@ public class Blackjack {
 			} else {
 				//Player's hand lose
 				console.println("You have a losing hand :" + hand);
+				if (hand.getValue() == dealer.getValue()) {
+					console.println("Remember: in a tie, you lose!");
+				}
 				player.pay(hand);
 			}
 		}

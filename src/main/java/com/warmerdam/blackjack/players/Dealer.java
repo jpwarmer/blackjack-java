@@ -13,21 +13,16 @@ public class Dealer extends BlackjackPlayer {
 	}
 	
 	/**
-	 * Add the card to the hand and return true if is able to receive more cards.
-	 *
-	 * @param card
 	 * @return
 	 */
-	public boolean needAnotherCard(Card card) {
+	public UserAction getNextAction() {
 		if (getValue() <= 16) {
-			addCard(card);
-			if (getValue() > 21) {
-				bust();
-				return false;
-			}
-			return true;
+			return UserAction.HIT;
 		}
-		return false;
+		if (getValue() > 21) {
+			return UserAction.DONE;
+		}
+		return UserAction.STAND;
 	}
 	
 	public boolean isBusted() {
