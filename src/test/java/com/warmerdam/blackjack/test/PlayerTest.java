@@ -27,6 +27,21 @@ public class PlayerTest {
 	}
 	
 	@Test
+	public void hitTest() {
+		player.addCard(new Card(CardRank.ACE, CardSuit.CLUB));
+		player.addCard(new Card(CardRank.FIVE, CardSuit.CLUB));
+		player.hit(new Card(CardRank.THREE, CardSuit.CLUB));
+		assertEquals(19, player.getValue());
+	}
+	
+	@Test
+	public void bustTest() {
+		player.addCard(new Card(CardRank.ACE, CardSuit.CLUB));
+		player.bust();
+		assertEquals(90.0, player.getMoney(), 0);
+	}
+	
+	@Test
 	public void surrenderFailureTest() {
 		player.addCard(new Card(CardRank.ACE, CardSuit.CLUB));
 		assertFalse(player.surrender());
@@ -45,6 +60,14 @@ public class PlayerTest {
 		player.addCard(new Card(CardRank.THREE, CardSuit.CLUB));
 		player.addCard(new Card(CardRank.THREE, CardSuit.DIAMOND));
 		assertTrue(player.split(new Card(CardRank.ACE, CardSuit.SPADE), new Card(CardRank.FIVE, CardSuit.HEART)));
+		
+	}
+	
+	@Test
+	public void splitNotAllowedTest() {
+		player.addCard(new Card(CardRank.THREE, CardSuit.CLUB));
+		player.addCard(new Card(CardRank.FOUR, CardSuit.DIAMOND));
+		assertFalse(player.split(new Card(CardRank.ACE, CardSuit.SPADE), new Card(CardRank.FIVE, CardSuit.HEART)));
 		
 	}
 	
